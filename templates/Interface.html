@@ -5,6 +5,7 @@
     {% block head %}  
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {% endblock %}
   </head>
   <body>
@@ -89,15 +90,36 @@
     </div>
       
     <script>
-      var slideIndex = 1;
+      let slideIndex = 1;
+      let imageSrc;
       showSlides(slideIndex);
 
       function sendImage(event) {
         console.log(event);
         console.log("HEEELOOOO");
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "/sendImage", true);
-        xhttp.send();
+        if (imageSrc != null) {
+          // preparing ajax request data
+          let formData = new FormData();
+          formData.append('imageToProcess', imageSrc);
+          let societe = $("input#societe").val();
+          let message = $("textarea#message").val();
+
+          $.ajax({
+            url: "/uploadImage", 
+            type: "post",
+            data: {
+              'file': imageSrc,
+              'module': 'ajax_data_form',
+              'societe': societe,
+              'message': message
+            },
+            cache:false,
+            success: function(res) {
+              if(res) {
+                alert(res);
+              }
+          }});
+        }
         
         console.log("false");
         return false;
@@ -133,9 +155,10 @@
       
       function showPreviewOne(event){
         if(event.target.files.length > 0){
-          let src = URL.createObjectURL(event.target.files[0]);
+          imageSrc = URL.createObjectURL(event.target.files[0]);
+          console.log(imageSrc);
           let preview = document.getElementById("file-ip-1-preview");
-          preview.src = src;
+          preview.src = imageSrc;
           preview.style.display = "block";
         } 
       }
