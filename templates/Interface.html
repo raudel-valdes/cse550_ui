@@ -4,17 +4,16 @@
   <head>
     {% block head %}  
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/styles.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     {% endblock %}
   </head>
   <body>
     {% block body %}
-      <!--The LEFT SCREEN-->
+
     <div class="split left">
 
       <div class="filters">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet"/>
         <input type="checkbox" id="filter1" name="filter1" value="Canny">
         <label for="filter1"> Canny</label><br>
         <input type="checkbox" id="filter2" name="filter2" value="Sobel">
@@ -37,15 +36,15 @@
             <button type="button" class="imgRemove" onclick="myImgRemoveFunctionOne()"></button>
           </label>
 
-          <input type="file"  name="img_one" id="file-ip-1" accept="image/*" onchange="showPreviewOne(event);">
         </div>
-
-        <small class="small">Use the ↺ icon to reset the image</small>
-      </div>
-
-      <div>
-        <form >
-          <input type="button" value ="Submit" onclick="sendImage(event)">
+        
+        <!-- <form method="POST" action = "{{ url_for('uploadImage') }}" enctype="multipart/form-data"> -->
+          <!-- <input type="file"  name="img_one" id="file-ip-1" accept="image/*" >
+          <input type="button" value="Upload"> -->
+        <!-- </form> -->
+        <form method="post" action = "{{ url_for('uploadImage') }}" enctype="multipart/form-data">
+          <input type="file" name="file" onchange="showPreviewOne(event)">
+          <input type="submit">
         </form>
       </div>
     </div>
@@ -53,7 +52,7 @@
     <!--The rigth screen-->
     <div class="split right">
       <div class="centered">
-
+          <img class="processed-image" src="{{ url_for('displayFile', filename=filename) }}">
         <!--slide show-->
     <!-- <div class="slideshow-container">
         <div class="mySlides fade">
@@ -87,20 +86,17 @@
         </div> -->
     <!-- </div> -->
       </div>
-    </div>
-      
+    </div>  
+
     <script>
       let slideIndex = 1;
-      let imageSrc;
       showSlides(slideIndex);
 
-      function sendImage(event) {
-        console.log(event);
-        console.log("HEEELOOOO");
+      function uploadImage(imageSrc) {
         if (imageSrc != null) {
           // preparing ajax request data
           let formData = new FormData();
-          formData.append('imageToProcess', imageSrc);
+          formData.append('file', imageSrc);
           let societe = $("input#societe").val();
           let message = $("textarea#message").val();
 
@@ -155,8 +151,7 @@
       
       function showPreviewOne(event){
         if(event.target.files.length > 0){
-          imageSrc = URL.createObjectURL(event.target.files[0]);
-          console.log(imageSrc);
+          let imageSrc = URL.createObjectURL(event.target.files[0]);
           let preview = document.getElementById("file-ip-1-preview");
           preview.src = imageSrc;
           preview.style.display = "block";
