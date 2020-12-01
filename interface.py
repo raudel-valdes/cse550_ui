@@ -1,5 +1,18 @@
-from flask import Flask, flash, render_template, url_for, request, jsonify, redirect, send_from_directory
-from werkzeug.utils import secure_filename
+try:
+	from flask import Flask, flash, render_template, url_for, request, jsonify, redirect, send_from_directory
+except ImportError:
+	from pip._internal import main as pip
+	pip(['install', '--user', 'Flask'])
+	from flask import Flask, flash, render_template, url_for, request, jsonify, redirect, send_from_directory
+
+try:
+	from werkzeug.utils import secure_filename
+except ImportError:
+	from pip._internal import main as pip
+	pip(['install', '--user', 'Werkzeug'])
+	from werkzeug.utils import secure_filename
+
+
 import xmlrpc.client
 import os
 
